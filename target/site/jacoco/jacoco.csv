@@ -1,0 +1,7 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+aoniAkkA,com.zhao.lex,Activator,108,0,0,0,20,0,5,0,5,0
+aoniAkkA,com.zhao.lex,ActorDemo,78,0,0,0,19,0,3,0,3,0
+aoniAkkA,com.zhao.lex,ActorDemo.TellName,6,0,0,0,3,0,1,0,1,0
+aoniAkkA,com.zhao.lex,AoniAkkAServiceImpl,13,0,0,0,4,0,2,0,2,0
+aoniAkkA,com.zhao.lex,ActorDemo.Greeter,84,0,6,0,14,0,6,0,3,0
+aoniAkkA,com.zhao.lex,ActorDemo.Greet,6,0,0,0,3,0,1,0,1,0

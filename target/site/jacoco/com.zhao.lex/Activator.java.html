@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Activator.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">aoniAkkA</a> &gt; <a href="index.source.html" class="el_package">com.zhao.lex</a> &gt; <span class="el_source">Activator.java</span></div><h1>Activator.java</h1><pre class="source lang-java linenums">package com.zhao.lex;
+
+import akka.actor.ActorRef;
+import akka.actor.ActorSystem;
+import akka.osgi.ActorSystemActivator;
+import org.osgi.framework.BundleContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * @author XDZ
+ * Created by root on 10/9/17.
+ */
+//public class Activator  extends AbstractBindingAwareConsumer implements AutoCloseable {
+<span class="nc" id="L15">public class Activator extends ActorSystemActivator implements AutoCloseable {</span>
+<span class="nc" id="L16">    private static final Logger LOG = LoggerFactory.getLogger(Activator.class);</span>
+    private AoniAkkAService akkaService;
+    private ActorRef mike;
+    private ActorRef bob;
+    private ActorRef alice;
+
+    @Override
+    public void configure(BundleContext context, ActorSystem system) {
+<span class="nc" id="L24">        LOG.info(&quot;Core bundle configured&quot;);</span>
+<span class="nc" id="L25">        bob = system.actorOf(ActorDemo.Greeter.props(&quot;Bob&quot;, &quot;Howya doing&quot;));</span>
+<span class="nc" id="L26">        alice = system.actorOf(ActorDemo.Greeter.props(&quot;Alice&quot;, &quot;Happy to meet you&quot;));</span>
+<span class="nc" id="L27">        mike = system.actorOf(ActorDemo.Greeter.props(&quot;Mike&quot;, &quot;Are you Ready&quot;));</span>
+<span class="nc" id="L28">        registerGreetService(context, system);</span>
+<span class="nc" id="L29">        mike.tell(new ActorDemo.Greet(mike), ActorRef.noSender());</span>
+<span class="nc" id="L30">        bob.tell(new ActorDemo.Greet(alice), ActorRef.noSender());</span>
+<span class="nc" id="L31">        alice.tell(new ActorDemo.Greet(bob), ActorRef.noSender());</span>
+<span class="nc" id="L32">        alice.tell(new ActorDemo.Greet(alice), ActorRef.noSender());</span>
+<span class="nc" id="L33">        alice.tell(new ActorDemo.Greet(mike), ActorRef.noSender());</span>
+     //   system.shutdown();
+<span class="nc" id="L35">        LOG.info(&quot;akka service registered&quot;);</span>
+<span class="nc" id="L36">    }</span>
+
+    public void registerGreetService(BundleContext context, ActorSystem system) {
+<span class="nc" id="L39">        akkaService = new AoniAkkAServiceImpl(system);</span>
+<span class="nc" id="L40">        context.registerService(AoniAkkAService.class, akkaService, null);</span>
+<span class="nc" id="L41">        context.registerService(ActorSystem.class, system, null);</span>
+<span class="nc" id="L42">    }</span>
+
+    @Override
+    public void close() {
+<span class="nc" id="L46">        LOG.info(&quot;close passing&quot;);</span>
+<span class="nc" id="L47">    }</span>
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

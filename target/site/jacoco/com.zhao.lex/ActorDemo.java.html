@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ActorDemo.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">aoniAkkA</a> &gt; <a href="index.source.html" class="el_package">com.zhao.lex</a> &gt; <span class="el_source">ActorDemo.java</span></div><h1>ActorDemo.java</h1><pre class="source lang-java linenums">package com.zhao.lex;
+
+
+import akka.actor.ActorRef;
+import akka.actor.ActorSystem;
+import akka.actor.Props;
+import akka.actor.UntypedActor;
+import com.typesafe.config.ConfigFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * @author XDZ
+ * Created by root on 10/11/17.
+ */
+<span class="nc" id="L16">public class ActorDemo {</span>
+
+<span class="nc" id="L18">    private static final Logger LOG = LoggerFactory.getLogger(ActorDemo.class);</span>
+
+    public static void exec() {
+<span class="nc" id="L21">        LOG.info(&quot;=========AoniAkkA TEST============&quot;);</span>
+<span class="nc" id="L22">        ActorSystem system = ActorSystem.create(&quot;actor-demo&quot;, ConfigFactory.load());</span>
+<span class="nc" id="L23">        ActorRef bob = system.actorOf(Greeter.props(&quot;Bob&quot;, &quot;Howya doing&quot;));</span>
+<span class="nc" id="L24">        ActorRef alice = system.actorOf(Greeter.props(&quot;Alice&quot;, &quot;Happy to meet you&quot;));</span>
+<span class="nc" id="L25">        ActorRef mike = system.actorOf(Greeter.props(&quot;Mike&quot;,&quot;Are you Ready&quot;));</span>
+<span class="nc" id="L26">        mike.tell(new Greet(mike), ActorRef.noSender());</span>
+<span class="nc" id="L27">        bob.tell(new Greet(alice), ActorRef.noSender());</span>
+<span class="nc" id="L28">        alice.tell(new Greet(bob), ActorRef.noSender());</span>
+<span class="nc" id="L29">        alice.tell(new Greet(alice), ActorRef.noSender());</span>
+<span class="nc" id="L30">        alice.tell(new Greet(mike), ActorRef.noSender());</span>
+        try {
+<span class="nc" id="L32">            Thread.sleep(1000);</span>
+<span class="nc" id="L33">        } catch (InterruptedException e) {</span>
+
+<span class="nc" id="L35">        }</span>
+<span class="nc" id="L36">        system.shutdown();</span>
+<span class="nc" id="L37">    }</span>
+//    public static void main(String[] args) {
+//        ActorSystem system = ActorSystem.create(&quot;actor-demo&quot;, ConfigFactory.load());
+//        ActorRef bob = system.actorOf(Greeter.props(&quot;Bob&quot;, &quot;Howya doing&quot;));
+//        ActorRef alice = system.actorOf(Greeter.props(&quot;Alice&quot;, &quot;Happy to meet you&quot;));
+//        ActorRef mike = system.actorOf(Greeter.props(&quot;Mike&quot;,&quot;Are you Ready&quot;));
+//        mike.tell(new Greet(mike), ActorRef.noSender());
+//        bob.tell(new Greet(alice), ActorRef.noSender());
+//        alice.tell(new Greet(bob), ActorRef.noSender());
+//        // alice.tell(new Greet(alice), ActorRef.noSender());
+//        alice.tell(new Greet(mike), ActorRef.noSender());
+//        try {
+//            Thread.sleep(1000);
+//        } catch (InterruptedException e) { /* ignore */ }
+//        system.shutdown();
+//    }
+
+    public static class Greet {
+        public final ActorRef target;
+<span class="nc" id="L56">        public Greet(ActorRef target) {</span>
+<span class="nc" id="L57">            this.target = target;</span>
+<span class="nc" id="L58">        }</span>
+    }
+
+    private static class TellName {
+        public final String name;
+<span class="nc" id="L63">        public TellName(String name) {</span>
+<span class="nc" id="L64">            this.name = name;</span>
+<span class="nc" id="L65">        }</span>
+    }
+
+<span class="nc" id="L68">    private static Object AskName = new Object();</span>
+
+<span class="nc" id="L70">    public static class Greeter extends UntypedActor {</span>
+        private final String myName;
+        private final String greeting;
+
+<span class="nc" id="L74">        Greeter(String name, String greeting) {</span>
+<span class="nc" id="L75">            this.myName = name;</span>
+<span class="nc" id="L76">            this.greeting = greeting;</span>
+<span class="nc" id="L77">        }</span>
+
+        public static Props props(String name, String greeting) {
+<span class="nc" id="L80">            return Props.create(Greeter.class, name, greeting);</span>
+        }
+        @Override
+        public void onReceive(Object message) throws Exception {
+<span class="nc bnc" id="L84" title="All 2 branches missed.">            if(message instanceof Greet) {</span>
+<span class="nc" id="L85">                ((Greet) message).target.tell(AskName, self());</span>
+<span class="nc bnc" id="L86" title="All 2 branches missed.">            }else if(message == AskName) {</span>
+<span class="nc" id="L87">                sender().tell(new TellName(myName), self());</span>
+<span class="nc bnc" id="L88" title="All 2 branches missed.">            }else if(message instanceof TellName) {</span>
+<span class="nc" id="L89">                LOG.info(&quot;=====================AKKADEMO===================&quot;);</span>
+<span class="nc" id="L90">                LOG.info(greeting + &quot;, &quot; + ((TellName)message).name);</span>
+<span class="nc" id="L91">                System.out.println(greeting + &quot;, &quot; + ((TellName)message).name);</span>
+            }
+<span class="nc" id="L93">        }</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>
