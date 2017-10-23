@@ -1,1 +1,2 @@
 akka-osgi
+akka-osgi
